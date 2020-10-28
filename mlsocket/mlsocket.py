@@ -1,7 +1,7 @@
 import os
 import socket
 import numpy as np
-import h5py
+#import h5py
 
 from joblib import load, dump
 from io import BytesIO
@@ -27,13 +27,6 @@ class MLSocket(socket.socket):
         buffer = BytesIO()
         if isinstance(data, np.ndarray):
             np.save(buffer, data, allow_pickle=True)
-        elif 'keras' in str(type(data)):
-            os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-            from tensorflow.keras.models import save_model
-            with h5py.File(buffer, 'w') as f:
-                save_model(data, f, include_optimizer=True)
-        elif 'sklearn' in str(type(data)):
-            dump(data, buffer)
         buffer.seek(0)
         return buffer.read()
 
@@ -43,14 +36,6 @@ class MLSocket(socket.socket):
         file.seek(0)
         if b'NUMPY' in data:
             return np.load(file)
-        elif b'sklearn' in data:
-            return load(file)
-        elif b'HDF' in data:
-            os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-            from tensorflow.keras.models import load_model
-            with h5py.File(file, 'r') as f:
-                model = load_model(f)
-            return model
         else:
             return data
 
