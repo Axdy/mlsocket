@@ -11,9 +11,9 @@ from socket import getdefaulttimeout
 class MLSocket(socket.socket):
     def __init__(self, proto=0, fileno=None, TCP=True):
         if TCP:
-            super().__init__(socket.AF_INET, socket.SOCK_DGRAM, proto, fileno)
-        else:
             super().__init__(socket.AF_INET, socket.SOCK_STREAM, proto, fileno)
+        else:
+            super().__init__(socket.AF_INET, socket.SOCK_DGRAM, proto, fileno)
 
 
 
